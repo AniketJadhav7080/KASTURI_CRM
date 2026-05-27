@@ -21,11 +21,6 @@ const Login = () => {
   const [showPassword, setShowPassword] =
     useState(false);
 
-  const [isSignup, setIsSignup] =
-    useState(false);
-
-  const [name, setName] = useState("");
-
   // LOGIN / SIGNUP
 
   const handleAuth = async () => {
@@ -40,68 +35,7 @@ const Login = () => {
 
     setLoading(true);
 
-    // SIGNUP
-
-    if (isSignup) {
-
-      const { error } =
-        await supabase.auth.signUp({
-
-          email,
-          password,
-
-        });
-
-      // SAVE USER
-
-      if (!error) {
-
-        const { count } =
-          await supabase
-            .from("users")
-            .select("*", { count: "exact", head: true });
-
-        const empId =
-          "EMP-" +
-          String(
-            (count || 0) + 1
-          ).padStart(3, "0");
-
-        await supabase
-          .from("users")
-          .insert([
-            {
-              email,
-              password,
-              role: "supervisor",
-              employee_id: empId,
-              name: name || email.split("@")[0],
-            },
-          ]);
-
-      }
-
-      setLoading(false);
-
-      if (error) {
-
-        alert(error.message);
-
-      } else {
-
-        alert(
-          "Account created successfully"
-        );
-
-        setIsSignup(false);
-
-      }
-
-    }
-
     // LOGIN
-
-    else {
 
       // CHECK USER
 
@@ -175,8 +109,6 @@ const Login = () => {
 
         alert("Role not found");
 
-      }
-
     }
 
   };
@@ -218,29 +150,8 @@ const Login = () => {
         </h1>
 
         <p className="text-center text-white/80 mt-3 mb-8 text-lg">
-
-          {isSignup
-            ? "Create New Account"
-            : "Construction Management System"}
-
+          Construction Management System
         </p>
-
-        {/* NAME (only on signup) */}
-
-        {isSignup && (
-          <div className="mb-5">
-            <label className="block text-white mb-2 font-medium">
-              Full Name
-            </label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-4 rounded-2xl bg-white/20 border border-white/30 text-white placeholder:text-white/60 outline-none"
-            />
-          </div>
-        )}
 
         {/* EMAIL */}
 
@@ -336,30 +247,9 @@ const Login = () => {
 
           {loading
             ? "Please Wait..."
-            : isSignup
-            ? "Create Account"
             : "Login"}
 
         </button>
-
-        {/* SWITCH ACCOUNT */}
-
-        <div className="text-center mt-6">
-
-          <button
-            onClick={() =>
-              setIsSignup(!isSignup)
-            }
-            className="text-white hover:underline"
-          >
-
-            {isSignup
-              ? "Already have an account? Login"
-              : "Create New Account"}
-
-          </button>
-
-        </div>
 
         {/* FOOTER */}
 
